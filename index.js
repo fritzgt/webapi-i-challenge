@@ -12,6 +12,17 @@ server.use(express.json());
 //importing database
 const db = require('./data/db.js');
 
+//1.Read from DB, GET request to /api/users
+server.get('/api/users', (req, res) => {
+  db.find()
+    .then(person => res.status(200).json(person))
+    .catch(err =>
+      res
+        .status(500)
+        .json({ error: 'The users information could not be retrieved.', err })
+    );
+});
+
 //Creating new data
 server.post('/api/users', (req, res) => {
   const newUser = req.body;
@@ -27,11 +38,6 @@ server.post('/api/users', (req, res) => {
         .res.json({ errorMessage: 'Please provide name and bio for the user.' })
     );
   }
-});
-
-//Read from DB
-server.get('/api/users', (req, res) => {
-  db.find().then(person => res.status(200).json(person));
 });
 
 //setting port to start listening
