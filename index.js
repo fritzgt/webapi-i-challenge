@@ -23,7 +23,30 @@ server.get('/api/users', (req, res) => {
     );
 });
 
-//Creating new data
+//2.Read from DB, GET request to /api/users/:id
+server.get('/api/users/:id', (req, res) => {
+  //by using curly braces we conver the string into a number
+  const { id } = req.params;
+  //   console.log('user id: ', id);
+  db.findById(id)
+    .then(person => {
+      if (person) {
+        res.status(200).json(person);
+        //if the id is not found then return the message not found
+      } else {
+        res
+          .status(404)
+          .json({ message: 'The user with the specified ID does not exist.' });
+      }
+    })
+    .catch(err =>
+      res
+        .status(500)
+        .json({ error: 'The users information could not be retrieved.', err })
+    );
+});
+
+//3.Creating new data
 server.post('/api/users', (req, res) => {
   const newUser = req.body;
   //   console.log(newUser);
