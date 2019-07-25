@@ -73,18 +73,46 @@ server.post('/api/users', (req, res) => {
   const { name, bio } = newUser;
   db.insert(newUser)
     .then(user => {
-      if (name && bio) {
-        res.status(201).json({ user });
-      } else {
+      if (!name || !bio) {
         res.status(400).json({
           errorMessage: 'Please provide name and bio for the user.'
         });
+      } else if (bio && name) {
+        res.status(201).json({ user });
       }
     })
     .catch(err =>
       res.status(500).json({
         error: 'There was an error while saving the user to the database'
       })
+    );
+});
+
+//5.Updating PUT request to /api/users/:id
+server.put('/api/users/:id', (req, res) => {
+  //by using curly braces we conver the string into a number
+  const { id } = req.params;
+  const newUser = req.body;
+  const { name, bio } = newUser;
+  console.log('user bio: ', newUser.bio);
+  db.update(id, newUser)
+    .then(user => {
+      if (!user) {
+        res
+          .status(404)
+          .json({ message: 'The user with the specified ID does not exist.' });
+      } else if (!name || !bio) {
+        res
+          .status(400)
+          .json({ message: 'Please provide name and bio for the user.' });
+      } else if (user) {
+        res.status(200).json({ newUser });
+      }
+    })
+    .catch(err =>
+      res
+        .status(500)
+        .json({ error: 'The users information could not be modified.', err })
     );
 });
 
