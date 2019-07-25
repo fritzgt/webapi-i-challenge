@@ -46,7 +46,27 @@ server.get('/api/users/:id', (req, res) => {
     );
 });
 
-//3.Creating new data
+//3.Delete request
+
+server.delete('/api/users/:id', (req, res) => {
+  const { id } = req.params;
+  console.log('user id: ', id);
+  db.remove(id)
+    .then(deleted => {
+      if (deleted) {
+        res.status(204).end();
+      } else {
+        res.status(404).json({
+          message: 'The user with the specified ID does not exist.'
+        });
+      }
+    })
+    .catch(err =>
+      res.status(500).json({ error: 'The user could not be removed' })
+    );
+});
+
+//4.Creating new data
 server.post('/api/users', (req, res) => {
   const newUser = req.body;
   //   console.log(newUser);
