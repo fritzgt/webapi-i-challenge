@@ -69,18 +69,23 @@ server.delete('/api/users/:id', (req, res) => {
 //4.Creating new data
 server.post('/api/users', (req, res) => {
   const newUser = req.body;
-  //   console.log(newUser);
-  if (newUser.name && newUser.bio) {
-    db.insert(newUser).then(user => {
-      res.status(201).json(user);
-    });
-  } else {
-    db.insert().catch(
-      res
-        .status(400)
-        .res.json({ errorMessage: 'Please provide name and bio for the user.' })
+  //   console.log(newUser);'
+  const { name, bio } = newUser;
+  db.insert(newUser)
+    .then(user => {
+      if (name && bio) {
+        res.status(201).json({ user });
+      } else {
+        res.status(400).json({
+          errorMessage: 'Please provide name and bio for the user.'
+        });
+      }
+    })
+    .catch(err =>
+      res.status(500).json({
+        error: 'There was an error while saving the user to the database'
+      })
     );
-  }
 });
 
 //setting port to start listening
